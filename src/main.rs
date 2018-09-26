@@ -38,6 +38,10 @@ struct Config {
 
 impl Config {
     fn new(args: &[String]) -> Config {
+        if args.len() < 3 {
+            // 引数の数が足りません
+            panic!("not enough arguments");
+        }
         // clone は参照を保持するよりも時間とメモリを消費するが、参照のライフタイムを管理する必要がなくなる
         let query = args[1].clone();
         let filename = args[2].clone();
