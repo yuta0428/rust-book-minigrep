@@ -7,6 +7,11 @@ fn main() {
     // collect は型注釈が必要
     // let(変数宣言) 変数名 型注釈
     let args: Vec<String> = env::args().collect();
-
     println!("{:?}", args);
+
+    // 参照を渡す
+    let query = &args[1];
+    let filename = &args[2];
+    println!("Searching for {}", query);
+    println!("In file {}", filename);
 }
