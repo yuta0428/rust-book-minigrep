@@ -11,6 +11,9 @@ use std::io::prelude::*;
 // プロセスを扱う
 use std::process;
 
+// エラー型を扱うError トレイト
+use std::error::Error;
+
 fn main() {
     // collect は型注釈が必要
     // let(変数宣言) 変数名 型注釈
@@ -27,16 +30,26 @@ fn main() {
     println!("Searching for {}", config.query);
     println!("In file {}", config.filename);
 
+    if let Err(e) = run(config) {
+        println!("Application error: {}", e);
+        process::exit(1);
+    }
+}
+
+// Box<T> トレイトを返り値で返したいとき使う ポインタで扱う Tで扱う型を指定
+// Error 様々なError型を包括するError型
+fn run(config: Config) -> Result<(), Box<Error>> {
     // ファイルへの可変なハンドルを得る
-    // 失敗した場合はfile not foundを出力
-    let mut f = File::open(config.filename).expect("file not found");
+    // ? 演算子は呼び出し元が処理できるように、現在の関数からエラー値を返す
+    let mut f = File::open(config.filename)?;
     // ファイル読み込み後に中身を保持するため、可変で空の String を生成
     let mut contents = String::new();
     // ファイルを読み込む
-    // 失敗した場合はsomething went wrong reading the fileを出力
-    f.read_to_string(&mut contents)
-        .expect("something went wrong reading the file");
+    f.read_to_string(&mut contents)?;
     println!("With text:\n{}", contents);
+
+    // Ok(()) という記法の、() を使うのは、run を副作用のためだけに呼び出していると示唆する慣習的な方法
+    Ok(())
 }
 
 // 設定値
