@@ -14,13 +14,13 @@ fn main() {
     let args: Vec<String> = env::args().collect();
     println!("{:?}", args);
 
-    let (query, filename) = parse_config(&args);
-    println!("Searching for {}", query);
-    println!("In file {}", filename);
+    let config = parse_config(&args);
+    println!("Searching for {}", config.query);
+    println!("In file {}", config.filename);
 
     // ファイルへの可変なハンドルを得る
     // 失敗した場合はfile not foundを出力
-    let mut f = File::open(filename).expect("file not found");
+    let mut f = File::open(config.filename).expect("file not found");
     // ファイル読み込み後に中身を保持するため、可変で空の String を生成
     let mut contents = String::new();
     // ファイルを読み込む
@@ -30,10 +30,16 @@ fn main() {
     println!("With text:\n{}", contents);
 }
 
+// 設定値
+struct Config {
+    query: String,
+    filename: String,
+}
+
 // 引数解析器
-fn parse_config(args: &[String]) -> (&str, &str) {
-    // 参照を渡す
-    let query = &args[1];
-    let filename = &args[2];
-    (query, filename)
+fn parse_config(args: &[String]) -> Config {
+    // clone は参照を保持するよりも時間とメモリを消費するが、参照のライフタイムを管理する必要がなくなる
+    let query = &args[1].clone();
+    let filename = &args[2].clone();
+    Config { query, filename }
 }
