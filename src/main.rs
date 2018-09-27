@@ -27,6 +27,7 @@ fn main() {
     });
     println!("Searching for {}", config.query);
     println!("In file {}", config.filename);
+    println!("Is sensitive {}", config.case_sensitive);
 
     // ライブラリクレート側のためクレート名をつけないと読み込めない
     if let Err(e) = minigrep::run(config) {
@@ -34,4 +35,3 @@ fn main() {
         process::exit(1);
     }
 }
-
