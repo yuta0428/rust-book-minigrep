@@ -16,22 +16,19 @@ fn main() {
     // collect は型注釈が必要
     // let(変数宣言) 変数名 型注釈
     let args: Vec<String> = env::args().collect();
-    println!("{:?}", args);
 
     // 引数解析
     // unwrap_or_else panic!ではない何らか独自のエラー処理を定義できる
     let config = Config::new(&args).unwrap_or_else(|err| {
         // 引数解析時に問題
-        println!("Problem parsing arguments: {}", err);
+        // eprintln! 標準エラーにエラーメッセージを出力する
+        eprintln!("Problem parsing arguments: {}", err);
         process::exit(1);
     });
-    println!("Searching for {}", config.query);
-    println!("In file {}", config.filename);
-    println!("Is sensitive {}", config.case_sensitive);
 
     // ライブラリクレート側のためクレート名をつけないと読み込めない
     if let Err(e) = minigrep::run(config) {
-        println!("Application error: {}", e);
+        eprintln!("Application error: {}", e);
         process::exit(1);
     }
 }
