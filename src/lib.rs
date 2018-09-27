@@ -38,8 +38,42 @@ pub fn run(config: Config) -> Result<(), Box<Error>> {
     let mut contents = String::new();
     // ファイルを読み込む
     f.read_to_string(&mut contents)?;
-    println!("With text:\n{}", contents);
+
+    for line in search(&config.query, &contents) {
+        println!("{}", line);
+    }
 
     // Ok(()) という記法の、() を使うのは、run を副作用のためだけに呼び出していると示唆する慣習的な方法
     Ok(())
+}
+
+// クエリ文字列の検索を行う
+// 2引数でライフタイムが異なるのでライブタイム注釈が必要　その時のライフタイムはを参照する文字列スライスの方
+fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+    // 検索結果を保持するベクタ
+    let mut results = Vec::new();
+
+    // 各行ごとに探索処理 lines()
+    for line in contents.lines() {
+        // 文字列中探索 contains()
+        if line.contains(query) {
+            results.push(line);
+        }
+    }
+
+    results
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    #[test]
+    fn one_result() {
+        let query = "duct";
+        let contents = "\
+Rust:
+safe, fast, productive.
+Pick three.";
+        assert_eq!(vec!["safe, fast, productive."], search(query, contents));
+    }
 }
